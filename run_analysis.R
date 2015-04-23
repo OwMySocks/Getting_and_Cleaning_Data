@@ -60,4 +60,5 @@ summaryAll <- summarise_each(groupAll,funs(mean))
 summary <- allSubjectMeansStdAct %>% group_by(Subject,Activity) %>%summarise_each(funs(mean))
 
 ##melt into narrow form 
-meltSummary <- melt(summaryAll, id=c("Subject","Activity"),variable.name = "Signal Measurement",value.name="Mean")
+meltSummary <- melt(summaryAll, id=c("Subject","Activity"),variable.name = "signalMeasurement",value.name="mean")
+
