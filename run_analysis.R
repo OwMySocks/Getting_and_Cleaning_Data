@@ -1,6 +1,7 @@
 ##course project for Cleaning and Getting Data
-library(dplyr)
 library(plyr)
+library(dplyr)
+
 library(reshape2)
 
 ## downloading data
