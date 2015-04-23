@@ -1,5 +1,7 @@
 ##course project for Cleaning and Getting Data
-
+library(dplyr)
+library(plyr)
+library(reshape2)
 
 ## downloading data
 ##if(!file.exists('UCI_HAR_DATASET/features.txt')){
@@ -35,16 +37,27 @@ names(tbl_trainX) <- tbl_features$V2
 ##collate the subject, y, and x files with added factor value of "test" or "train" for the participant type
 test <- tbl_df(cbind(tbl_testSubject,tbl_testY,tbl_testX))
 train <- tbl_df(cbind(tbl_trainSubject,tbl_trainY,tbl_trainX))
-names(test)[1:2] <- c("Subjects","Activities")
-names(train)[1:2] <- c("Subjects","Activities")
+names(test)[1:2] <- c("Subject","Activities")
+names(train)[1:2] <- c("Subject","Activities")
 ##merge test and train tables 
-
-
+allSubjects <- rbind(train,test)
+## correct column names to be valid 
+names(allSubjects) <- make.names(names(allSubjects),unique=TRUE)
 
 ##extract only those features that are means or standard deviations
-
+allSubjectMeansStd <- select(allSubjects,1,2,contains("mean"),contains("std"))
 
 ##pull in activity names
-
+names(tbl_activities) <- c("Activities","Activity")
+allSubjectMeansStdAct <- select(join(allSubjectMeansStd,tbl_activities, by="Activities"),1,"Activity"=89,3:88)
 
 ##rename variables for readability
+
+
+##average each measure grouped by subject and activity
+groupAll <- group_by(allSubjectMeansStdAct,Subject,Activity)
+summaryAll <- summarise_each(groupAll,funs(mean))
+summary <- allSubjectMeansStdAct %>% group_by(Subject,Activity) %>%summarise_each(funs(mean))
+
+##melt into narrow form 
+meltSummary <- melt(summaryAll, id=c("Subject","Activity"),variable.name = "Signal Measurement",value.name="Mean")
